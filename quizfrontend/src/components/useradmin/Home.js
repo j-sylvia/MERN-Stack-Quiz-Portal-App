@@ -18,17 +18,23 @@ const Home = () => {
             try {
                 const { data } = await axios.post('http://localhost:4000/', {}, { withCredentials: true });
                 const { status, user, isAdmin } = data;
+                // const isAdmin = data.isAdmin
+                // setIsAdmin(isAdmin); // Set isAdmin state
                 setUsername(user);
-
+                // setLoggedIn(true);
+                console.log("isAdmin:",isAdmin)
+                console.log(data)
                 if (status) { 
-                    if (isAdmin) {
+                    if (data.isAdmin) {
                         navigate('/create-course');
                         console.log(user)
                         console.log("Home page if",isAdmin)
+                        window.location.reload();
                     } else {
-                        navigate('/attend-exam');
-                        console.log(user)
+                        navigate('/list-course');
+                        console.log("User",user)
                         console.log("Home page else",isAdmin)
+                        window.location.reload();
                     }
                 } else {
                     removeCookie('token');
@@ -51,6 +57,7 @@ const Home = () => {
 
     return (
         <div>
+         
             <h1>{" "} Welcome {username}</h1>
             <button onClick={Logout}>Logout</button>
             <ToastContainer />
