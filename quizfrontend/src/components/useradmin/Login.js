@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import {Link,useNavigate} from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -7,7 +8,7 @@ import {MDBBtn,MDBContainer,MDBCard,MDBCardBody,MDBCardImage,MDBRow,MDBCol,MDBIc
 
 function Login() {
   const navigate = useNavigate();
-
+  const [cookies, setCookie] = useCookies([]);
   const [inputValue, setInputValue] = useState({
     email: '',
     password: ''
@@ -21,12 +22,12 @@ function Login() {
 
   const handleError = (err) => 
     toast.error(err, {
-      position: "top-right",
+      position: "bottom-left",
       });
 
       const handleSuccess = (message) => 
     toast.success(message, {
-      position: "top-right",
+      position: "bottom-left",
       theme: "dark",
 
       });
@@ -43,12 +44,22 @@ function Login() {
           withCredentials: true
         }
       );
-      const {success,message,token} = data;
+      const {success,message,token,role,userName,userId} = data;
       if(success) {
         handleSuccess(message);
+        setCookie('token', token, { path: '/' });
+        setCookie('userName', userName, { path: '/' });
+        setCookie('userId', userId, { path: '/' });
         localStorage.setItem('token', token); 
+        localStorage.setItem('role', role);
+        
+        console.log("Role:",role)
+        console.log("UserName:",userName)
+        console.log("UserId:",userId)
+        console.log(token)
         setTimeout(() => {
           navigate('/');
+          window.location.reload();
         }, 6000);
       } else {
         handleError(message);
